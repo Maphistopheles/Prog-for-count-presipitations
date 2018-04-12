@@ -13,6 +13,8 @@ namespace ConsoleApplication61
         private string _filePath;
         private double _snow;
         public double _incrPart;
+        public double a;
+        public double b;
 
 
         public ParamOfTheDayManager()
@@ -25,6 +27,8 @@ namespace ConsoleApplication61
         {
             _entries = new List<ParametersOfTheDay>();
             ReadFromFile(filePath);
+            MakeTrendFromData(out a, out b);            
+            CompareTrendWsReal(a, b);
             
         }
 
@@ -50,21 +54,10 @@ namespace ConsoleApplication61
             try
             {
                 ParametersOfTheDay POTD = new ParametersOfTheDay();
-                POTD.Date = Convert.ToDateTime(fields[0]);
-                Console.WriteLine("Converting was Ok");
-                Console.WriteLine(POTD.Date);
-                Console.ReadKey();
-                
-                POTD.Temperature = Double.Parse(fields[1]);
-                Console.WriteLine("Converting was Ok");
-                Console.WriteLine(POTD.Temperature);
-                Console.ReadKey();
+                POTD.Date = Convert.ToDateTime(fields[0]);                               
+                POTD.Temperature = Double.Parse(fields[1]);                
                 POTD.Precip = Double.Parse(fields[2]);
-                Console.WriteLine("Converting was Ok");
-                Console.WriteLine(POTD.Precip);
-                Console.ReadKey();
-
-
+                
                 double K = POTD.Temperature * 5;
                 if(POTD.Temperature <= 0)
                 {
@@ -85,14 +78,9 @@ namespace ConsoleApplication61
                     }
                 }
                 POTD.Snow = _snow;
-                Console.WriteLine(POTD.Snow);
-
-                POTD.WaterPenitr = WP(POTD);
-                Console.WriteLine(POTD.WaterPenitr);
-
+                POTD.WaterPenitr = WP(POTD);                
                 POTD.IncrPart = _incrPart + POTD.WaterPenitr;
-                _incrPart += POTD.WaterPenitr;
-                Console.ReadKey();
+                _incrPart += POTD.WaterPenitr;               
                 AddEntry(POTD);
                 
             }
@@ -116,6 +104,34 @@ namespace ConsoleApplication61
             }
             
             return WaterPenitrate;
+        }
+
+        public void MakeTrendFromData(out double a, out double b)
+        {
+            double SumOfPowX = 0, SumOfX = 0, n = _entries.Count, SumOfXY = 0, SumOfY = 0;
+            for(int i = 0; i < _entries.Count; i++)
+            {
+                SumOfPowX += (i+1) * (i+1);
+                SumOfX += (i+1);
+                SumOfXY += (i+1) * _entries[i].IncrPart;
+                SumOfY += _entries[i].IncrPart;
+            }
+            double det = SumOfPowX * n - Math.Pow(SumOfX, 2);
+            if(Math.Abs(det) < 1e-17)
+            {
+                throw new ArgumentException("Invalid data!");
+            }
+            a = (SumOfXY * n - SumOfX * SumOfY) / det;
+            b = (SumOfY - a * SumOfX) / n;
+        }
+
+        public void CompareTrendWsReal(double a, double b)
+        {
+            for(int i = 0; i < _entries.Count; i++)
+            {
+                _entries[i].Trend = a * (i + 1) + b;
+                _entries[i].LastPart = _entries[i].IncrPart - _entries[i].Trend;
+            }
         }
         
         public void MakeOutFile(string filepath)

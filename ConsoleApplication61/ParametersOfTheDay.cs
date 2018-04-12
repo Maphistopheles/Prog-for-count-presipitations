@@ -17,6 +17,7 @@ namespace ConsoleApplication61
         public double WaterPenitr { get; set; }
         public double IncrPart { get; set; }
         public double Trend { get; set; }
+        public double LastPart { get; set; }
 
         public ParametersOfTheDay()
         {
@@ -27,18 +28,21 @@ namespace ConsoleApplication61
             WaterPenitr = 0;
             IncrPart = 0;
             Trend = 0;
+            LastPart = 0;
             
         }
 
         public override string ToString()
         {
-            return string.Format("{0:d}	{1:f5}	{2:f5}	{3:f5}	{4:f5}	{5:f5} {6:f5}", Date,
+            return string.Format("{0:d}	{1:f5}	{2:f5}	{3:f5}	{4:f5}	{5:f5} {6:f5} {7:f5} {8:f5}", Date,
                 Temperature,
                 Precip,
                 Snow,
                 EfectPrecip,
                 WaterPenitr,
-                IncrPart);
+                IncrPart,
+                Trend,
+                LastPart);
         }
 
         

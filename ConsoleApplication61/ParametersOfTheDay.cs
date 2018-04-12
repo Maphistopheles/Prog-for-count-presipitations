@@ -16,6 +16,7 @@ namespace ConsoleApplication61
         public double EfectPrecip { get; set; }
         public double WaterPenitr { get; set; }
         public double IncrPart { get; set; }
+        public double Trend { get; set; }
 
         public ParametersOfTheDay()
         {
@@ -25,6 +26,7 @@ namespace ConsoleApplication61
             EfectPrecip = 0;
             WaterPenitr = 0;
             IncrPart = 0;
+            Trend = 0;
             
         }
 
